@@ -2,7 +2,8 @@ from flask import Flask
 from datetime import timedelta
 from sqlalchemy import select
 from extensions import db, login_manager, bootstrap
-from models import User
+from models import User, Task
+from flask_migrate import Migrate
 
 
 def create_app():
@@ -13,7 +14,6 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Time the user out after 30 minutes
-
     db.init_app(app)
     login_manager.init_app(app)
     bootstrap.init_app(app)
