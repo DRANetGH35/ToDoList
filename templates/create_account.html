@@ -1,0 +1,44 @@
+{% from "bootstrap5/form.html" import render_form %}
+{% extends "base.html" %} {% block content %}
+
+{% include 'navbar.html' %}
+<style>
+.column{
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+}
+</style>
+<body>
+<div>
+<form method="post" action="/create_account" style="display:flex; justify-content:center; flex-direction: row; flex: 1; margin-top:50px">
+    {{ form.csrf_token }}
+    <div class="column" style="gap:17px; text-align:right;">
+    {{ form.username.label }}
+    {{ form.password.label }}
+    {{ form.confirm_password.label }}
+    </div>
+    <div class="column">
+    {{form.username(size=20) }}
+    {{ form.password(size=20) }}
+    {{ form.confirm_password(size=20) }}
+    {{ form.submit}}
+    </div>
+</form>
+</div>
+<div style="display:flex; justify-content:center;">
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+</div>
+</body>
+
+{% include 'footer.html' %}
+
+{% endblock %}

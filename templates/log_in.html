@@ -4,21 +4,31 @@
 {% include 'navbar.html' %}
 
 
+<style>
+    .column{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    }
+    .login-container{
+    display:flex;
+    justify-content:center;
+    flex-direction:row;
+    flex: 1;
+    }
+</style>
 
 <body>
 <div>
-<form method="post" action="/log_in" style="display:flex; justify-content:center; flex-direction: row; flex: 1; margin-top:50px">
+<form method="post" action="/log_in" class="login-container" style="margin-top:50px">
     {{ form.csrf_token }}
-    <div>
+    <div class="column" style="gap:17px; text-align:right;">
     {{ form.username.label }}
-    <br>
     {{ form.password.label }}
     </div>
-    <div>
+    <div class="column">
     {{form.username(size=20) }}
-    <br>
     {{form.password(size=20) }}
-    <br>
     {{form.submit}}
     </div>
 </form>

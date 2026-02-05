@@ -27,8 +27,8 @@ def create_app():
             return None
 
 
-    #with app.app_context():
-    #    db.create_all()
+    with app.app_context():
+        db.create_all()
 
 
 
