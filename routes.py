@@ -1,7 +1,7 @@
 
 from flask import render_template, redirect, request, flash
 from flask_login import current_user, logout_user, login_user
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from forms import LoginForm, CreateAccountForm
 from extensions import db
@@ -14,9 +14,21 @@ app = create_app()
 def index():
     return render_template('index.html', current_user=current_user)
 
-@app.route('/log_in')
+@app.route('/log_in', methods=['GET', 'POST'])
 def log_in():
     form = LoginForm()
+    if request.method == 'POST':
+        entered_username = request.form.get('username')
+        entered_password = request.form.get('password')
+        user = db.session.execute(db.Select(User).where(User.name == entered_username)).scalars().first()
+        if not user:
+            flash('wrong username or password')
+            return render_template('log_in.html', form=form)
+        password_match = check_password_hash(user.password, entered_password)
+        if not password_match:
+            flash('wrong username or password')
+            return render_template('log_in.html', form=form)
+        login_user(user)
     return render_template('log_in.html', form=form)
 
 @app.route('/log_out')
