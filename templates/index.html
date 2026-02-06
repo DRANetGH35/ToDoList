@@ -6,18 +6,26 @@
 <body>
 <h1 style="text-align:center;">To-do List</h1>
 <div class="container" style="padding: 20px; width:60%; margin-left: 20%;">
-    <form class="container" style="width:60%">
+    <form class="container" style="width:60%" action="/add_task" method="post">
         <table style="margin-left: 10%">
             <tr>
-                <td><label class="form-label">Enter your next task</label></td>
-                <td><input type="text"></td>
-                <td>
-                    <input class="btn btn-primary" type="submit" value="✔">
-                </td>
+                <td>{{form.description.label}}</td>
+                <td>{{form.description(size=20)}}</td>
+                <td>{{form.submit}}</td>
             </tr>
         </table>
-
 </form>
+<table>
+    {% if current_user.is_authenticated %}
+    {% for task in data %}
+    <tr>
+    <td>
+    {{ task.description }}
+    </td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
 </div>
 </body>
 

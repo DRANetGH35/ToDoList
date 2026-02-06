@@ -1,18 +1,26 @@
+from datetime import datetime
 
 from flask import render_template, redirect, request, flash
 from flask_login import current_user, logout_user, login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from forms import LoginForm, CreateAccountForm
+from forms import LoginForm, CreateAccountForm, TaskForm
 from extensions import db
-from models import User
+from models import User, Task
 from app import create_app
 
 app = create_app()
 
+def get_tasks(user):
+    if not user.is_authenticated:
+        return None
+    return db.session.execute(db.Select(Task).where(Task.user_id == user.id)).scalars().all()
+
 @app.route('/')
 def index():
-    return render_template('index.html', current_user=current_user)
+    data = get_tasks(current_user)
+    form = TaskForm()
+    return render_template('index.html', current_user=current_user, form=form, data=data)
 
 @app.route('/log_in', methods=['GET', 'POST'])
 def log_in():
@@ -23,13 +31,14 @@ def log_in():
         user = db.session.execute(db.Select(User).where(User.name == entered_username)).scalars().first()
         if not user:
             flash('wrong username or password')
-            return render_template('log_in.html', form=form)
+            return redirect('/login')
         password_match = check_password_hash(user.password, entered_password)
         if not password_match:
             flash('wrong username or password')
-            return render_template('log_in.html', form=form)
+            return redirect('/login')
         login_user(user)
-    return render_template('log_in.html', form=form)
+        return redirect('/')
+    return render_template('log_in.html', form=form, current_user=current_user)
 
 @app.route('/log_out')
 def log_out():
@@ -51,5 +60,22 @@ def create_account():
                         is_admin=False)
             db.session.add(new_user)
             db.session.commit()
-        return render_template('create_account.html', form=form)
+        return redirect('/')
     return render_template('create_account.html', form=form)
+
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    if not current_user.is_authenticated:
+        return redirect('/log_in')
+    user = current_user
+    description = request.form.get('description')
+    date_created = datetime.timestamp(datetime.now())
+    date_completed = None
+    new_task = Task(description=description,
+                    date_created=date_created,
+                    date_completed=date_completed,
+                    user_id=user.id,
+                    user=user)
+    db.session.add(new_task)
+    db.session.commit()
+    return redirect('/')
