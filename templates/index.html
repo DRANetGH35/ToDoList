@@ -4,9 +4,9 @@
 
 <body>
 <h1 style="text-align:center;">To-do List</h1>
-<div class="container" style="padding: 20px; width:60%; margin-left: 20%;">
-    <form class="container" style="width:60%" action="/add_task" method="post">
-        <table style="margin-left: 10%">
+<div class="container" style="display:flex; flex-direction:column;">
+    <form class="container" action="/add_task" method="post" style="display:flex;">
+        <table>
             <tr>
                 <td>{{form.description.label}}</td>
                 <td>{{form.description(size=20)}}</td>
@@ -14,12 +14,13 @@
             </tr>
         </table>
 </form>
-<table>
+<table style="display:flex; flex: 1; gap: 20px;">
     {% if current_user.is_authenticated %}
     {% for task in data %}
-    <tr>
-    <td>{{ task.description }}</td>
+    <tr style="display:flex; gap:70px;">
     <td>{{ task.date_created | datetime_filter }}</td>
+    <td>{{ task.description }}</td>
+    <td>Due Date: <input type="date"></td>
     </tr>
     {% endfor %}
     {% endif %}
