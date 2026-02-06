@@ -1,6 +1,5 @@
 {% from "bootstrap5/form.html" import render_form %}
 {% extends "base.html" %} {% block content %}
-
 {% include 'navbar.html' %}
 
 <body>
@@ -19,9 +18,8 @@
     {% if current_user.is_authenticated %}
     {% for task in data %}
     <tr>
-    <td>
-    {{ task.description }}
-    </td>
+    <td>{{ task.description }}</td>
+    <td>{{ task.date_created | datetime_filter }}</td>
     </tr>
     {% endfor %}
     {% endif %}

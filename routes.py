@@ -11,6 +11,12 @@ from app import create_app
 
 app = create_app()
 
+@app.template_filter('datetime_filter')
+def format_datetime(value, time_format="%Y-%m-%d"):
+    if value is None:
+        return ""
+    return datetime.fromtimestamp(value).strftime(time_format)
+
 def get_tasks(user):
     if not user.is_authenticated:
         return None
